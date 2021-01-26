@@ -9,7 +9,8 @@
   "scripts": {
     "build": "rollup --config rollup.config.js",
     "test": "web-test-runner test/*.test.js --node-resolve",
-    "test-watch": "web-test-runner --watch test/*.test.js --node-resolve"
+    "test-watch": "web-test-runner --watch test/*.test.js --node-resolve",
+    "prepublishOnly": "npm run test && npm run build"
   },
   "repository": {
     "type": "git",
