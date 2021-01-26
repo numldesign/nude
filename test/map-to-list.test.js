@@ -47,5 +47,25 @@ describe('State map convertion', () => {
         },
       ]
     },
+    {
+      input: {
+        '': 'value1',
+        'mod1, mod2 & mod3': 'value2',
+      },
+      output: [
+        {
+          mods: [],
+          value: 'value1',
+        },
+        {
+          mods: ['mod1'],
+          value: 'value2',
+        },
+        {
+          mods: ['mod2', 'mod3'],
+          value: 'value2',
+        },
+      ]
+    },
   ]);
 });

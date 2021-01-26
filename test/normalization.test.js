@@ -127,5 +127,121 @@ describe('State normalization', () => {
         },
       ],
     },
+    {
+      input: [
+        {
+          mods: [],
+          value: '1',
+        },
+        {
+          mods: ['state-1'],
+          value: '2',
+        },
+        {
+          mods: ['state-2', 'state-3'],
+          value: '3',
+        },
+      ],
+      output: [
+        {
+          mods: [],
+          notMods: ['state-1', 'state-2', 'state-3'],
+          value: '1',
+        },
+        {
+          mods: ['state-1'],
+          notMods: ['state-2', 'state-3'],
+          value: '2',
+        },
+        {
+          mods: ['state-2', 'state-3'],
+          notMods: ['state-1'],
+          value: '3',
+        },
+        {
+          mods: ['state-1', 'state-2'],
+          notMods: ['state-3'],
+          value: '1',
+        },
+        {
+          mods: ["state-1", "state-2", "state-3"],
+          notMods: [],
+          value: "1"
+        },
+        {
+          mods: ["state-1", "state-3"],
+          notMods: ["state-2"],
+          value: "1"
+        },
+        {
+          mods: ["state-2"],
+          notMods: ["state-1", "state-3"],
+          value: "1"
+        },
+        {
+          mods: ["state-3"],
+          notMods: ["state-1", "state-2"],
+          value: "1"
+        }
+      ],
+    },
+    {
+      input: [
+        {
+          mods: [],
+          value: '1',
+        },
+        {
+          mods: ['state-1'],
+          value: '2',
+        },
+        {
+          mods: ['state-2', 'state-3'],
+          value: '2',
+        },
+      ],
+      output: [
+        {
+          mods: [],
+          notMods: ['state-1', 'state-2', 'state-3'],
+          value: '1',
+        },
+        {
+          mods: ['state-1'],
+          notMods: ['state-2', 'state-3'],
+          value: '2',
+        },
+        {
+          mods: ['state-2', 'state-3'],
+          notMods: ['state-1'],
+          value: '2',
+        },
+        {
+          mods: ['state-1', 'state-2'],
+          notMods: ['state-3'],
+          value: '1',
+        },
+        {
+          mods: ["state-1", "state-2", "state-3"],
+          notMods: [],
+          value: "1"
+        },
+        {
+          mods: ["state-1", "state-3"],
+          notMods: ["state-2"],
+          value: "1"
+        },
+        {
+          mods: ["state-2"],
+          notMods: ["state-1", "state-3"],
+          value: "1"
+        },
+        {
+          mods: ["state-3"],
+          notMods: ["state-1", "state-2"],
+          value: "1"
+        }
+      ],
+    },
   ]);
 });
