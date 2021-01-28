@@ -1,13 +1,14 @@
 {
   "name": "numl-utils",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Low-level CSS utils",
   "main": "dist/index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "build": "tsc --allowJs -d --emitDeclarationOnly src/index.js && mv ./src/index.d.ts ./dist/ && rm ./src/*.d.ts && rollup --config rollup.config.js",
+    "typings": "tsc --allowJs -d --emitDeclarationOnly src/index.js && mv ./src/index.d.ts ./dist/ && rm ./src/*.d.ts",
+    "build": "npm run typings && rollup --config rollup.config.js",
     "test": "web-test-runner test/*.test.js --node-resolve",
     "test-watch": "web-test-runner --watch test/*.test.js --node-resolve",
     "prepublishOnly": "npm run test && npm run build"

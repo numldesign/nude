@@ -31,39 +31,33 @@ export function withConfig(config, callback) {
 /**
  * An object that describes a relation between specific modifiers and style value.
  * @typedef StyleState
- * @property {String[]} mods
- * @property {String[]} [notMods]
+ * @property {string[]} mods
+ * @property {string[]} [notMods]
  * @property {StyleValue} value
  */
 
 /**
- * @typedef StyleStateList
- * @type {StyleState[]}
+ * @typedef {StyleState[]} StyleStateList
  */
 
 /**
- * @typedef StyleValue
- * @type {String|Boolean|null|undefined}
+ * @typedef {string|boolean|null|undefined} StyleValue
  */
 
 /**
- * @typedef StyleMap
- * @type {Object<String,StyleValue>}
+ * @typedef {Object.<string,StyleValue>} StyleMap
  */
 
 /**
- * @typedef StyleStateMap
- * @type {Object<String,StyleState>}
+ * @typedef {Object.<string,StyleState>} StyleStateMap
  */
 
 /**
- * @typedef StyleStateMapList
- * @type {StyleStateMap[]}
+ * @typedef {StyleStateMap[]} StyleStateMapList
  */
 
 /**
- * @typedef StyleStateListMap
- * @type {Object<String,StyleStateList>}
+ * @typedef {Object.<string,StyleStateList>} StyleStateListMap
  */
 
 /**
@@ -103,7 +97,7 @@ export function styleValueToStyleStateList(styleValue) {
 /**
  * Fill all unspecified states and cover all possible combinations of presented modifiers.
  * @param {StyleStateList} stateList
- * @param {String[]} [allModes]
+ * @param {string[]} [allModes]
  * @return {StyleStateList}
  */
 export function normalizeStates(stateList, allModes) {
@@ -180,7 +174,7 @@ export function replaceStateValues(states, replaceFn) {
 /**
  * Compile states to finite CSS with selectors.
  * State values should contain a string value with CSS style list.
- * @param {String} selector
+ * @param {string} selector
  * @param {StyleStateList} states
  */
 export function applyStates(selector, states) {
@@ -196,7 +190,7 @@ export function applyStates(selector, states) {
 /**
  * Filter map keys by the list.
  * @param {StyleMap|StyleStateMap} map
- * @param {String[]} list - list of keys to leave
+ * @param {string[]} list - list of keys to leave
  */
 export function filterMap(map, list) {
   return list.reduce((newMap, key) => {
@@ -209,7 +203,7 @@ export function filterMap(map, list) {
 /**
  * Converts StyleMap to StyleStateMap with normalization.
  * @param {StyleMap} styleMap
- * @param {Boolean} normalize
+ * @param {boolean} normalize
  * @return {StyleStateMap}
  * @constructor
  */
@@ -250,7 +244,7 @@ export function getModesFromStyleStateList(stateList) {
 /**
  * Get all presented modes from style state list map.
  * @param {StyleStateMapList} stateListMap
- * @return {String[]}
+ * @return {string[]}
  */
 export function getModesFromStyleStateListMap(stateListMap) {
   return Object.keys(stateListMap)
@@ -279,7 +273,7 @@ export function checkStyleMap(styleMap, styleList) {
 /**
  * Convert style map to the normalized style map state list.
  * @param {StyleMap} styleMap
- * @param {String[]} [keys]
+ * @param {string[]} [keys]
  * @return {StyleStateListMap}
  */
 export function styleMapToStyleMapStateList(styleMap, keys) {
