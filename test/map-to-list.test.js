@@ -1,10 +1,10 @@
-import { stateMapToList } from '../src/index';
+import { styleValueToStyleStateList } from '../src/index';
 import { expect } from './utils';
 
 function checkNormalization(list) {
   list.forEach((obj, i) => {
     it(`to list ${i}`, () => {
-      expect(stateMapToList(obj.input)).to.eql(obj.output);
+      expect(styleValueToStyleStateList(obj.input)).to.eql(obj.output);
     });
   });
 }

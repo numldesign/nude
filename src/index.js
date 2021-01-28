@@ -3,12 +3,12 @@ import { getCombinations } from './utils';
 export const DIRECTIONS = ['top', 'right', 'bottom', 'left'];
 export const COLOR_FUNCS = ['rgb', 'rgba'];
 
-const CONFIG = {
+const DEFAULT_CONFIG = {
   getModSelector(modName) {
     return `[data-is-${modName}]`;
   }
 };
-let CUSTOM_CONFIG = CONFIG;
+let CONFIG = DEFAULT_CONFIG;
 const CUSTOM_CONFIGS = new Map;
 
 /**
@@ -17,31 +17,69 @@ const CUSTOM_CONFIGS = new Map;
  * @param {Function} callback
  */
 export function withConfig(config, callback) {
-  if (!CUSTOM_CONFIG.get(config)) {
-    CUSTOM_CONFIG.set(config, Object.assign(CONFIG, config));
+  if (!CUSTOM_CONFIGS.get(config)) {
+    CUSTOM_CONFIGS.set(config, Object.assign({}, DEFAULT_CONFIG, config));
   }
 
-  CUSTOM_CONFIG = CUSTOM_CONFIG.get(config);
+  CONFIG = CUSTOM_CONFIGS.get(config);
 
   callback();
 
-  CUSTOM_CONFIG = CONFIG;
+  CONFIG = DEFAULT_CONFIG;
 }
 
 /**
- * @typedef State
+ * An object that describes a relation between specific modifiers and style value.
+ * @typedef StyleState
  * @property {String[]} mods
  * @property {String[]} [notMods]
- * @property {string} value
+ * @property {StyleValue} value
+ */
+
+/**
+ * @typedef StyleStateList
+ * @type {StyleState[]}
+ */
+
+/**
+ * @typedef StyleValue
+ * @type {String|Boolean|null|undefined}
+ */
+
+/**
+ * @typedef StyleMap
+ * @type {Object<String,StyleValue>}
+ */
+
+/**
+ * @typedef StyleStateMap
+ * @type {Object<String,StyleState>}
+ */
+
+/**
+ * @typedef StyleStateMapList
+ * @type {StyleStateMap[]}
+ */
+
+/**
+ * @typedef StyleStateListMap
+ * @type {Object<String,StyleStateList>}
  */
 
 /**
  *
- * @param {Object<String,String>} styleMap
- * @return {State[]}
+ * @param {StyleValue} styleValue
+ * @return {StyleStateList}
  */
-export function stateMapToList(styleMap) {
-  return Object.entries(styleMap).reduce((list, [mods, value]) => {
+export function styleValueToStyleStateList(styleValue) {
+  if (typeof styleValue !== 'object') {
+    return [{
+      mods: [],
+      value: styleValue,
+    }];
+  }
+
+  return Object.entries(styleValue).reduce((list, [mods, value]) => {
     mods = mods.trim();
 
     if (mods) {
@@ -64,13 +102,14 @@ export function stateMapToList(styleMap) {
 
 /**
  * Fill all unspecified states and cover all possible combinations of presented modifiers.
- * @param {State[]} states
- * @return {State[]}
+ * @param {StyleStateList} stateList
+ * @param {String[]} [allModes]
+ * @return {StyleStateList}
  */
-export function normalizeStates(states) {
+export function normalizeStates(stateList, allModes) {
   let baseState;
 
-  states.forEach(state => {
+  stateList.forEach(state => {
     if (!state.mods.length) {
       baseState = state;
     }
@@ -84,64 +123,55 @@ export function normalizeStates(states) {
       value: '',
     };
 
-    states.unshift(baseState);
+    stateList.unshift(baseState);
   }
 
-  const allModsSet = new Set;
+  if (!allModes) {
+    const allModesSet = new Set;
 
-  states.forEach(state => state.mods.forEach(mod => allModsSet.add(mod)));
+    stateList.forEach(state => state.mods.forEach(mod => allModesSet.add(mod)));
 
-  const allMods = Array.from(allModsSet);
+    allModes = Array.from(allModesSet);
+  }
 
-  const allCombinations = getCombinations(allMods).concat([]);
+  const allCombinations = getCombinations(allModes).concat([]);
 
   allCombinations.forEach(comb => {
     comb.sort();
 
-    const existState = states.find(state => state.mods.join() === comb.join());
+    const existState = stateList.find(state => state.mods.join() === comb.join());
 
     if (existState) return;
 
-    states.push({
+    stateList.push({
       mods: comb,
       notMods: [],
       value: baseState.value,
     });
   });
 
-  states.forEach(state => {
-    state.notMods = allMods.filter(mod => !state.mods.includes(mod));
+  stateList.forEach(state => {
+    state.notMods = allModes.filter(mod => !state.mods.includes(mod));
   });
 
-  return states;
-}
-
-/**
- * Extract all unique values from the list of state objects.
- * @param {State[]} states
- * @return {String[]}
- */
-export function extractValuesFromStates(states) {
-  const values = [];
-
-  states.forEach(state => {
-    if (!values.includes(state.value)) {
-      values.push(state.value);
-    }
-  });
-
-  return values;
+  return stateList;
 }
 
 /**
  * Replace state values with new ones.
  * For example, if you want to replace initial values with finite CSS code.
- * @param {State[]} states
- * @param {Object<String,String>} map
+ * @param {StyleState[]} states
+ * @param {Function} replaceFn
  */
-export function replaceStateValues(states, map) {
+export function replaceStateValues(states, replaceFn) {
+  const cache = {};
+
   states.forEach(state => {
-    state.value = map[state.value] || state.value;
+    if (cache[state.value]) {
+      cache[state.value] = replaceFn(state.value)
+    }
+
+    state.value = cache[state.value];
   });
 
   return states;
@@ -151,14 +181,144 @@ export function replaceStateValues(states, map) {
  * Compile states to finite CSS with selectors.
  * State values should contain a string value with CSS style list.
  * @param {String} selector
- * @param {State[]} states
+ * @param {StyleStateList} states
  */
 export function applyStates(selector, states) {
-  const getModSelector = CUSTOM_CONFIG.getModSelector;
+  const getModSelector = CONFIG.getModSelector;
 
   return states.reduce((css, state) => {
     const modifiers = `${(state.mods || []).map(getModSelector).join('')}${(state.notMods || []).map(mod => `:not(${getModSelector(mod)})`).join('')}`;
 
     return `${css}${selector}${modifiers}{${state.value}}\n`;
   }, '');
+}
+
+/**
+ * Filter map keys by the list.
+ * @param {StyleMap|StyleStateMap} map
+ * @param {String[]} list - list of keys to leave
+ */
+export function filterMap(map, list) {
+  return list.reduce((newMap, key) => {
+    newMap[key] = map[key];
+
+    return newMap;
+  }, {});
+}
+
+/**
+ * Converts StyleMap to StyleStateMap with normalization.
+ * @param {StyleMap} styleMap
+ * @param {Boolean} normalize
+ * @return {StyleStateMap}
+ * @constructor
+ */
+export function StyleMapToStyleStateMap(styleMap, normalize) {
+  const styleStateMap = {};
+
+  Object.keys(styleMap).forEach(style => {
+    const styleValue = styleMap[style];
+
+    styleStateMap[style] = typeof styleValue === 'object'
+      ? styleValueToStyleStateList(styleValue)
+      : [{ mods: [], value: styleValue }];
+
+    if (normalize) {
+      normalizeStates(styleStateMap[style]);
+    }
+  });
+
+  return styleStateMap;
+}
+
+/**
+ * Get all presented modes from style state list.
+ * @param {StyleStateList} stateList
+ */
+export function getModesFromStyleStateList(stateList) {
+  return stateList.reduce((list, state) => {
+    state.mods.forEach(mod => {
+      if (!list.includes(mod)) {
+        list.push(mod);
+      }
+    });
+
+    return list;
+  }, []);
+}
+
+/**
+ * Get all presented modes from style state list map.
+ * @param {StyleStateMapList} stateListMap
+ * @return {String[]}
+ */
+export function getModesFromStyleStateListMap(stateListMap) {
+  return Object.keys(stateListMap)
+    .reduce((list, style) => {
+      const stateList = stateListMap[style];
+
+      getModesFromStyleStateList(stateList).forEach(mod => {
+        if (!list.includes(mod)) {
+          list.push(mod);
+        }
+      });
+
+      return list;
+    }, []);
+}
+
+/**
+ * Check if there is at least a single style (from the provided list) that is presented in a map.
+ * @param styleMap
+ * @param styleList
+ */
+export function checkStyleMap(styleMap, styleList) {
+  return !!styleList.find(style => style in styleMap && (styleMap[style] || styleMap[style] === ''));
+}
+
+/**
+ * Convert style map to the normalized style map state list.
+ * @param {StyleMap} styleMap
+ * @param {String[]} [keys]
+ * @return {StyleStateListMap}
+ */
+export function styleMapToStyleMapStateList(styleMap, keys) {
+  keys = keys || Object.keys(styleMap);
+
+  if (!keys.length) return [];
+
+  /**
+   * @type {StyleStateListMap}
+   */
+  const stateListMap = {};
+
+  keys.forEach(style => {
+    stateListMap[style] = styleValueToStyleStateList(styleMap[style]);
+  });
+
+  const allModes = getModesFromStyleStateListMap(stateListMap);
+
+  keys.forEach(style => {
+    const stateList = stateListMap[style];
+
+    normalizeStates(stateListMap[style], allModes);
+
+    stateListMap[style] = stateList.sort((state1, state2) => {
+      return state1.mods.join() < state2.mods.join() ? -1 : 1;
+    });
+  });
+
+  return stateListMap[keys[0]].reduce((list, state, i) => {
+    list.push({
+      mods: state.mods,
+      notMods: state.notMods,
+      value: keys.reduce((map, style) => {
+        map[style] = stateListMap[style][i].value;
+
+        return map;
+      }, {}),
+    });
+
+    return list;
+  }, []);
 }
