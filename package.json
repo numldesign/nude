@@ -1,6 +1,6 @@
 {
   "name": "numl-utils",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Low-level CSS utils",
   "main": "dist/index.js",
   "directories": {

@@ -274,12 +274,12 @@ export function checkStyleMap(styleMap, styleList) {
  * Convert style map to the normalized style map state list.
  * @param {StyleMap} styleMap
  * @param {string[]} [keys]
- * @return {StyleStateListMap}
+ * @return {StyleStateMapList}
  */
 export function styleMapToStyleMapStateList(styleMap, keys) {
   keys = keys || Object.keys(styleMap);
 
-  if (!keys.length) return {};
+  if (!keys.length) return [];
 
   /**
    * @type {StyleStateListMap}
