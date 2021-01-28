@@ -154,7 +154,7 @@ export function normalizeStates(stateList, allModes) {
 /**
  * Replace state values with new ones.
  * For example, if you want to replace initial values with finite CSS code.
- * @param {StyleState[]} states
+ * @param {StyleStateList|StyleStateMapList} states
  * @param {Function} replaceFn
  */
 export function replaceStateValues(states, replaceFn) {
@@ -175,7 +175,7 @@ export function replaceStateValues(states, replaceFn) {
  * Compile states to finite CSS with selectors.
  * State values should contain a string value with CSS style list.
  * @param {string} selector
- * @param {StyleStateList} states
+ * @param {StyleStateList|StyleStateMapList} states
  */
 export function applyStates(selector, states) {
   const getModSelector = CONFIG.getModSelector;
@@ -279,7 +279,7 @@ export function checkStyleMap(styleMap, styleList) {
 export function styleMapToStyleMapStateList(styleMap, keys) {
   keys = keys || Object.keys(styleMap);
 
-  if (!keys.length) return [];
+  if (!keys.length) return {};
 
   /**
    * @type {StyleStateListMap}
