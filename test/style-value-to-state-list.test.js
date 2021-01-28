@@ -9,8 +9,35 @@ function checkNormalization(list) {
   });
 }
 
-describe('State map convertion', () => {
+describe('State value conversion', () => {
   checkNormalization([
+    {
+      input: 'text value',
+      output: [
+        {
+          mods: [],
+          value: 'text value',
+        },
+      ]
+    },
+    {
+      input: '',
+      output: [
+        {
+          mods: [],
+          value: '',
+        },
+      ]
+    },
+    {
+      input: false,
+      output: [
+        {
+          mods: [],
+          value: false,
+        },
+      ]
+    },
     {
       input: {
         '': 'value1',

@@ -167,7 +167,7 @@ export function replaceStateValues(states, replaceFn) {
   const cache = {};
 
   states.forEach(state => {
-    if (cache[state.value]) {
+    if (!cache[state.value]) {
       cache[state.value] = replaceFn(state.value)
     }
 
