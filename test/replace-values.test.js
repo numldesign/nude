@@ -16,34 +16,43 @@ describe('Replace state values', () => {
         [
           {
             mods: [],
-            value: 'value1',
+            value: {
+              style1: 'value1',
+            },
           },
           {
             mods: ['mod1'],
-            value: 'value2',
+            value: {
+              style2: 'value2',
+              style3: 'value3',
+            },
           },
           {
             mods: ['mod2'],
-            value: 'value2',
+            value: {
+              style2: 'value4',
+              style3: 'value5',
+            },
           },
         ],
-        {
-          value1: 'compiled value1',
-          value2: 'compiled value2',
-        }
+        ({ style1, style2, style3 }) => `${style1 || ''}${style2 || ''}${style3 || ''}`,
       ],
       output: [
         {
           mods: [],
-          value: 'compiled value1',
+          value: "value1",
         },
         {
-          mods: ['mod1'],
-          value: 'compiled value2',
+          mods: [
+            "mod1",
+          ],
+          value: "value2value3",
         },
         {
-          mods: ['mod2'],
-          value: 'compiled value2',
+          mods: [
+            "mod2",
+          ],
+          value: "value4value5",
         },
       ]
     },

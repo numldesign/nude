@@ -164,14 +164,14 @@ export function normalizeStates(stateList, allModes) {
  * @param {Function} replaceFn
  */
 export function replaceStateValues(states, replaceFn) {
-  const cache = {};
+  const cache = new Map;
 
   states.forEach(state => {
-    if (!cache[state.value]) {
-      cache[state.value] = replaceFn(state.value)
+    if (!cache.get(state.value)) {
+      cache.set(state.value, replaceFn(state.value));
     }
 
-    state.value = cache[state.value];
+    state.value = cache.get(state.value);
   });
 
   return states;
