@@ -6,7 +6,7 @@ export const COLOR_FUNCS = ['rgb', 'rgba'];
 const DEFAULT_CONFIG = {
   getModSelector(modName) {
     return `[data-is-${modName}]`;
-  }
+  },
 };
 let CONFIG = DEFAULT_CONFIG;
 const CUSTOM_CONFIGS = new Map;
@@ -23,9 +23,11 @@ export function withConfig(config, callback) {
 
   CONFIG = CUSTOM_CONFIGS.get(config);
 
-  callback();
+  const result = callback();
 
   CONFIG = DEFAULT_CONFIG;
+
+  return result;
 }
 
 /**
@@ -79,7 +81,7 @@ export function styleValueToStyleStateList(styleValue) {
     if (mods) {
       mods.split(/[|,]/).forEach(mod => {
         list.push({
-          mods: mod.trim().split(/[\s&]+/),
+          mods: mod.trim().split(/[\s&]+/).filter(m => m),
           value,
         });
       });
@@ -315,4 +317,14 @@ export function styleMapToStyleMapStateList(styleMap, keys) {
 
     return list;
   }, []);
+}
+
+/**
+ *
+ * @param {string} selector
+ * @param {string[]} mods
+ * @param {Object.<string,string>[] | Object.<string,string>} styles
+ */
+export function renderStyles(selector, mods, styles) {
+  return `${selector}`;
 }

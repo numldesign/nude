@@ -27,45 +27,45 @@ describe('State normalization', () => {
       ],
       output: [
         {
-          "mods": [],
-          "notMods": [
+          mods: [],
+          notMods: [
             "mod1",
             "mod2",
           ],
-          "value": {
-            "one": "value1",
+          value: {
+            one: "value1",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod1",
           ],
-          "notMods": [
+          notMods: [
             "mod2",
           ],
-          "value": {
-            "one": "value1",
+          value: {
+            one: "value1",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod1",
             "mod2",
           ],
-          "notMods": [],
-          "value": {
-            "one": "value2",
+          notMods: [],
+          value: {
+            one: "value2",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod2",
           ],
-          "notMods": [
+          notMods: [
             "mod1",
           ],
-          "value": {
-            "one": "value1",
+          value: {
+            one: "value1",
           },
         },
       ],
@@ -86,108 +86,163 @@ describe('State normalization', () => {
       ],
       output: [
         {
-          "mods": [],
-          "notMods": [
+          mods: [],
+          notMods: [
             "mod1",
             "mod2",
             "mod3",
           ],
-          "value": {
-            "one": "value1",
-            "two": "value3",
+          value: {
+            one: "value1",
+            two: "value3",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod1",
           ],
-          "notMods": [
+          notMods: [
             "mod2",
             "mod3",
           ],
-          "value": {
-            "one": "value1",
-            "two": "value4",
+          value: {
+            one: "value1",
+            two: "value4",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod1",
             "mod2",
           ],
-          "notMods": [
+          notMods: [
             "mod3",
           ],
-          "value": {
-            "one": "value2",
-            "two": "value3",
+          value: {
+            one: "value2",
+            two: "value3",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod1",
             "mod2",
             "mod3",
           ],
-          "notMods": [],
-          "value": {
-            "one": "value1",
-            "two": "value3",
+          notMods: [],
+          value: {
+            one: "value1",
+            two: "value3",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod1",
             "mod3",
           ],
-          "notMods": [
+          notMods: [
             "mod2",
           ],
-          "value": {
-            "one": "value1",
-            "two": "value3",
+          value: {
+            one: "value1",
+            two: "value3",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod2",
           ],
-          "notMods": [
+          notMods: [
             "mod1",
             "mod3",
           ],
-          "value": {
-            "one": "value1",
-            "two": "value3",
+          value: {
+            one: "value1",
+            two: "value3",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod2",
             "mod3",
           ],
-          "notMods": [
+          notMods: [
             "mod1",
           ],
-          "value": {
-            "one": "value1",
-            "two": "value4",
+          value: {
+            one: "value1",
+            two: "value4",
           },
         },
         {
-          "mods": [
+          mods: [
             "mod3",
           ],
-          "notMods": [
+          notMods: [
             "mod1",
             "mod2",
           ],
-          "value": {
-            "one": "value1",
-            "two": "value3",
+          value: {
+            one: "value1",
+            two: "value3",
           },
         },
       ],
-    }
+    },
+    {
+      input: [
+        {
+          one: {
+            ', mod1': 'value1',
+            'mod2': 'value2',
+          },
+        },
+        ['one']
+      ],
+      output: [
+        {
+          mods: [],
+          notMods: [
+            "mod1",
+            "mod2",
+          ],
+          value: {
+            one: "value1"
+          },
+        },
+        {
+          mods: [
+            "mod1"
+          ],
+          notMods: [
+            "mod2",
+          ],
+          value: {
+            one: "value1",
+          },
+        },
+        {
+          mods: [
+            "mod1",
+            "mod2",
+          ],
+          notMods: [],
+          value: {
+            one: "value1",
+          },
+        },
+        {
+          mods: [
+            "mod2",
+          ],
+          notMods: [
+            "mod1",
+          ],
+          value: {
+            one: "value2",
+          },
+        },
+      ],
+    },
   ]);
 });
