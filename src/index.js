@@ -39,6 +39,10 @@ export function withConfig(config, callback) {
  */
 
 /**
+ * @typedef {Array<ComputeUnit>|Number} ComputeUnit
+ */
+
+/**
  * @typedef {StyleState[]} StyleStateList
  */
 
@@ -47,11 +51,11 @@ export function withConfig(config, callback) {
  */
 
 /**
- * @typedef {Object.<string,StyleValue>} StyleMap
+ * @typedef {Object<string,StyleValue>} StyleMap
  */
 
 /**
- * @typedef {Object.<string,StyleState>} StyleStateMap
+ * @typedef {Object<string,StyleState>} StyleStateMap
  */
 
 /**
@@ -59,7 +63,7 @@ export function withConfig(config, callback) {
  */
 
 /**
- * @typedef {Object.<string,StyleStateList>} StyleStateListMap
+ * @typedef {Object<string,StyleStateList>} StyleStateListMap
  */
 
 /**
@@ -323,8 +327,47 @@ export function styleMapToStyleMapStateList(styleMap, keys) {
  *
  * @param {string} selector
  * @param {string[]} mods
- * @param {Object.<string,string>[] | Object.<string,string>} styles
+ * @param {Object<string,string>[] | Object<string,string>} styles
  */
 export function renderStyles(selector, mods, styles) {
   return `${selector}`;
+}
+
+export const COMPUTE_FUNC = [
+  (a, b) => a ^ b,
+  (a, b) => a | b,
+  (a, b) => a & b,
+  (a) => a ? 0 : 1,
+];
+
+/**
+ *
+ * @param {ComputeUnit} computeUnit
+ * @param {Number[]} values
+ * @return {Number}
+ */
+export function computeState(computeUnit, values) {
+  const func = COMPUTE_FUNC[computeUnit[0]];
+
+  let a = computeUnit[1];
+
+  if (typeof a === 'object') {
+    a = computeState(a, values);
+  } else {
+    a = values[a];
+  }
+
+  if (computeUnit.length === 2) {
+    return func(a);
+  }
+
+  let b = computeUnit[2];
+
+  if (typeof b === 'object') {
+    b = computeState(b, values);
+  } else {
+    b = values[b];
+  }
+
+  return func(a, b);
 }
